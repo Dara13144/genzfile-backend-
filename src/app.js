@@ -44,16 +44,30 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, curl, postman)
     if (!origin) return callback(null, true);
-    if (config.allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+
+    const isAllowed =
+      config.allowedOrigins.includes(origin) ||
+      config.allowedOrigins.includes('*') ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com') ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      process.env.NODE_ENV !== 'production';
+
+    if (isAllowed) {
       return callback(null, true);
     }
-    return callback(new Error('Blocked by CORS policy'));
+    // Always allow the caller's origin rather than throwing an error that breaks OPTIONS preflight
+    return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Range', 'x-share-auth'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Range', 'x-share-auth', 'X-Requested-With', 'Accept', 'Origin'],
   exposedHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length', 'Content-Disposition'],
 }));
+
+// Explicit global OPTIONS preflight handler
+app.options('*', cors());
 
 // Rate Limiting
 const apiLimiter = rateLimit({

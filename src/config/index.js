@@ -3,8 +3,8 @@ dotenv.config();
 
 export const config = {
   port: parseInt(process.env.PORT || '5050', 10),
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
-  allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173')
+  frontendUrl: process.env.FRONTEND_URL || 'https://genzfile123.vercel.app',
+  allowedOrigins: (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:5173,https://genzfile123.vercel.app')
     .split(',')
     .map(origin => origin.trim()),
   
