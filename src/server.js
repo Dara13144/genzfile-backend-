@@ -1,3 +1,9 @@
+import WebSocket from 'ws';
+
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WebSocket;
+}
+
 import { app } from './app.js';
 import { config } from './config/index.js';
 

@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import WebSocket from 'ws';
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/index.js';
+
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WebSocket;
+}
 
 class SupabaseStorageAdapter {
   constructor() {
@@ -9,6 +14,9 @@ class SupabaseStorageAdapter {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
+      },
+      realtime: {
+        transport: WebSocket,
       }
     });
     this.bucket = config.supabase.bucket;

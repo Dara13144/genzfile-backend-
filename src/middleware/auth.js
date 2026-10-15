@@ -1,13 +1,21 @@
+import WebSocket from 'ws';
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/index.js';
 import { db } from '../services/db.js';
 
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WebSocket;
+}
+
 export const JWT_SECRET = process.env.JWT_SECRET || process.env.SUPABASE_JWT_SECRET || 'genz-file-super-secret-jwt-key-2026';
 
 let supabaseAuthClient = null;
 if (config.supabase.isConfigured) {
-  supabaseAuthClient = createClient(config.supabase.url, config.supabase.serviceRoleKey);
+  supabaseAuthClient = createClient(config.supabase.url, config.supabase.serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    realtime: { transport: WebSocket }
+  });
 }
 
 export async function authenticateToken(req, res, next) {

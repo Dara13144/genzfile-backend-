@@ -1,3 +1,9 @@
+import WebSocket from 'ws';
+
+if (typeof globalThis.WebSocket === 'undefined') {
+  globalThis.WebSocket = WebSocket;
+}
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -70,7 +76,7 @@ if (fs.existsSync(frontendDistPath)) {
 }
 
 // Health Check
-app.get('/api/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
